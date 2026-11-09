@@ -1,0 +1,173 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum TriggerMoment {
+  LOGIN
+  LOGOUT
+  DURING
+  MANUAL
+}
+
+enum FrequencyUnit {
+  DAY
+  WEEK
+  MONTH
+}
+
+enum EvaluationAction {
+  SHOWN
+  SKIPPED
+  SUBMITTED
+}
+
+model System {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String
+  code        String   @unique
+  description String?
+  baseUrl     String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  integration   Integration?
+  configuration WidgetConfiguration?
+  evaluations   SatisfactionEvaluation[]
+  interactions  WidgetInteraction[]
+}
+
+model Integration {
+  id             String   @id @default(uuid()) @db.Uuid
+  systemId       String   @unique @db.Uuid
+  apiKeyHash     String   @unique
+  allowedOrigins String[] @default([])
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+
+  system System @relation(fields: [systemId], references: [id], onDelete: Cascade)
+}
+
+model Student {
+  id                String   @id @default(uuid()) @db.Uuid
+  institutionalCode String   @unique
+  fullName          String?
+  email             String?
+  active            Boolean  @default(true)
+  createdAt         DateTime @default(now())
+
+  evaluations  SatisfactionEvaluation[]
+  interactions WidgetInteraction[]
+}
+
+model WidgetConfiguration {
+  id                 String          @id @default(uuid()) @db.Uuid
+  systemId           String          @unique @db.Uuid
+  triggerMoments     TriggerMoment[] @default([LOGIN])
+  frequencyValue     Int             @default(1)
+  frequencyUnit      FrequencyUnit   @default(MONTH)
+  promptDelayMinutes Int             @default(0)
+  allowSkip          Boolean         @default(true)
+  active             Boolean         @default(true)
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  system System @relation(fields: [systemId], references: [id], onDelete: Cascade)
+}
+
+model SatisfactionEvaluation {
+  id              String    @id @default(uuid()) @db.Uuid
+  studentId       String    @db.Uuid
+  systemId        String    @db.Uuid
+  rating          Int?
+  comment         String?
+  lastEvaluatedAt DateTime?
+  nextEligibleAt  DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  student Student @relation(fields: [studentId], references: [id])
+  system  System  @relation(fields: [systemId], references: [id])
+
+  history EvaluationHistory[]
+
+  @@unique([studentId, systemId])
+  @@index([systemId])
+}
+
+model EvaluationHistory {
+  id           String   @id @default(uuid()) @db.Uuid
+  evaluationId String   @db.Uuid
+  rating       Int
+  comment      String?
+  answeredAt   DateTime @default(now())
+
+  evaluation SatisfactionEvaluation @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+
+  @@index([evaluationId, answeredAt])
+  @@index([evaluationId, rating])
+}
+
+model WidgetInteraction {
+  id         String           @id @default(uuid()) @db.Uuid
+  studentId  String           @db.Uuid
+  systemId   String           @db.Uuid
+  sessionId  String?
+  action     EvaluationAction
+  occurredAt DateTime         @default(now())
+
+  student Student @relation(fields: [studentId], references: [id])
+  system  System  @relation(fields: [systemId], references: [id])
+
+  @@index([studentId, systemId, occurredAt])
+  @@unique([studentId, systemId, sessionId, action])
+}
+
+model Role {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+
+  administrators AdminUser[]
+}
+
+model AdminUser {
+  id           String   @id @default(uuid()) @db.Uuid
+  fullName     String
+  email        String   @unique
+  passwordHash String
+  active       Boolean  @default(true)
+  roleId       String   @db.Uuid
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  role Role @relation(fields: [roleId], references: [id])
+
+  auditLogs AuditLog[]
+}
+
+model AuditLog {
+  id          String   @id @default(uuid()) @db.Uuid
+  adminId     String?  @db.Uuid
+  action      String
+  entity      String
+  entityId    String?
+  description String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  admin AdminUser? @relation(fields: [adminId], references: [id], onDelete: SetNull)
+
+  @@index([adminId, createdAt])
+  @@index([createdAt])
+}

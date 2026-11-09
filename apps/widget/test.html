@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Prueba de integración</title>
+</head>
+<body>
+  <h1>Sistema universitario externo</h1>
+  <p>Esta página simula el sistema de Kardex.</p>
+
+  <script src="./dist/widget.js"></script>
+
+  <script>
+    SatisfaccionWidget.init({
+      apiUrl: 'http://localhost:3001',
+      token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwYTZkZTQxNC1hMjRmLTQwODMtYjhjMS0wNzUyY2U1ODExZGEiLCJpbnRlZ3JhdGlvbklkIjoiMDZkOGExZjEtMWM1Mi00MDJhLWFiYzUtNzNlYjExMmMzZmJlIiwic3lzdGVtSWQiOiI2MzE1ZWY3Ny0xOTY0LTQ2MDctOGVhMC1hNTQzNGFmNDAyZTYiLCJpYXQiOjE3OTQxODkzNDgsImV4cCI6MTc5NDE4OTY0OH0.5MWjoHLOCC6GhXR42z4WHrCcIS3lZllvVsdeny5yLZ4',
+      trigger: 'LOGIN'
+    });
+  </script>
+</body>
+</html>

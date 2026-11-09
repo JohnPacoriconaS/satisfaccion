@@ -1,0 +1,14 @@
+import * as Prisma from './internal/prismaNamespaceBrowser.js';
+export { Prisma };
+export * as $Enums from './enums.js';
+export * from './enums.js';
+export type System = Prisma.SystemModel;
+export type Integration = Prisma.IntegrationModel;
+export type Student = Prisma.StudentModel;
+export type WidgetConfiguration = Prisma.WidgetConfigurationModel;
+export type SatisfactionEvaluation = Prisma.SatisfactionEvaluationModel;
+export type EvaluationHistory = Prisma.EvaluationHistoryModel;
+export type WidgetInteraction = Prisma.WidgetInteractionModel;
+export type Role = Prisma.RoleModel;
+export type AdminUser = Prisma.AdminUserModel;
+export type AuditLog = Prisma.AuditLogModel;

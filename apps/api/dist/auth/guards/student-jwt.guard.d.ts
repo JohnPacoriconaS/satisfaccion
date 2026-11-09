@@ -1,0 +1,9 @@
+import { CanActivate, ExecutionContext } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { PrismaService } from '../../prisma/prisma.service.js';
+export declare class StudentJwtGuard implements CanActivate {
+    private readonly jwtService;
+    private readonly prisma;
+    constructor(jwtService: JwtService, prisma: PrismaService);
+    canActivate(context: ExecutionContext): Promise<boolean>;
+}

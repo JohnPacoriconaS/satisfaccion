@@ -1,0 +1,25 @@
+{
+  "name": "@satisfaccion/widget",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vite": "^8.3.6"
+  },
+  "dependencies": {
+    "@satisfaccion/api-client": "workspace:*",
+    "@satisfaccion/schemas": "workspace:*",
+    "@satisfaccion/types": "workspace:*"
+  }
+}
